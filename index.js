@@ -151,7 +151,7 @@ class socketlink {
     async getUsageMetrics() {
         this.checkAdminApiKey();
 
-        const url = new URL(this.api.PING_SERVER, this.connectionUrl);
+        const url = new URL(this.api.GET_METRICS, this.connectionUrl);
         return this.makeRequest({
             url: url.toString(),
             method: 'GET',
