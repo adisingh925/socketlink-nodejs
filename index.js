@@ -605,7 +605,7 @@ class socketlink {
         }
 
         const url = new URL(
-            GET_MESSAGE_FOR_ROOM.replace(':rid', encodeURIComponent(rid)),
+            this.api.GET_MESSAGE_FOR_ROOM.replace(':rid', encodeURIComponent(rid)),
             this.connectionUrl
         );
 
