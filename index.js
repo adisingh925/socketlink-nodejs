@@ -218,14 +218,14 @@ class socketlink {
         });
     }
 
-    async subscribeToRoom(roomId) {
+    async subscribeToRoom(rid) {
         this.checkclientapiKey();
 
-        if (!roomId || typeof roomId !== "string") {
-            throw new Error("Invalid roomId: must be a non-empty string");
+        if (!rid || typeof rid !== "string") {
+            throw new Error("Invalid rid: must be a non-empty string");
         }
 
-        const pathWithRoomId = `${this.api.SUBSCRIBE_TO_ROOM}/${encodeURIComponent(roomId)}`;
+        const pathWithRoomId = `${this.api.SUBSCRIBE_TO_ROOM}/${encodeURIComponent(rid)}`;
         const url = new URL(pathWithRoomId, this.connectionUrl);
 
         return this.makeRequest({
@@ -369,11 +369,11 @@ class socketlink {
         });
     }
 
-    async banUsersInGivenRooms(roomId, uids) {
+    async banUsersInGivenRooms(rid, uids) {
         this.checkAdminApiKey();
 
-        if (!roomId || typeof roomId !== 'string') {
-            throw new Error("roomId must be a non-empty string");
+        if (!rid || typeof rid !== 'string') {
+            throw new Error("rid must be a non-empty string");
         }
 
         if (!uids) {
@@ -396,7 +396,7 @@ class socketlink {
             headers: { "api-key": this.adminApiKey },
             data: [
                 {
-                    rid: roomId,       // e.g., 'pub-state-cache-test-0'
+                    rid: rid,       // e.g., 'pub-state-cache-test-0'
                     uid: uids       // e.g., ['test']
                 }
             ]
@@ -433,11 +433,11 @@ class socketlink {
         });
     }
 
-    async unbanUsersFromGivenRooms(roomId, uids) {
+    async unbanUsersFromGivenRooms(rid, uids) {
         this.checkAdminApiKey();
 
-        if (!roomId || typeof roomId !== 'string') {
-            throw new Error("roomId must be a non-empty string");
+        if (!rid || typeof rid !== 'string') {
+            throw new Error("rid must be a non-empty string");
         }
 
         if (!uids) {
@@ -460,7 +460,7 @@ class socketlink {
             headers: { "api-key": this.adminApiKey },
             data: [
                 {
-                    rid: roomId,       // e.g., 'pub-state-cache-test-0'
+                    rid: rid,       // e.g., 'pub-state-cache-test-0'
                     uid: uids       // e.g., ['test']
                 }
             ]
