@@ -86,13 +86,13 @@ class socketlink {
 
             const source = parsedMsg.source;
 
-            if(source === "user"){
+            if (source === "user") {
                 if (this.onMessage) this.onMessage(parsedMsg.data, parsedMsg.rid);
-            } else if(source === "server") {
+            } else if (source === "server") {
                 if (this.onServerBroadcast) this.onServerBroadcast(parsedMsg.data);
             } else if (source === "admin") {
                 if (this.onAdminBroadcast) this.onAdminBroadcast(parsedMsg.data, parsedMsg.rid);
-            }            
+            }
         });
 
         this.ws.on('close', () => {
@@ -104,6 +104,7 @@ class socketlink {
         });
 
         this.ws.on('error', (err) => {
+            console.error(err);
             if (this.onError) this.onError(err);
         });
 
@@ -199,17 +200,12 @@ class socketlink {
             throw new Error("rids is required");
         }
 
-        let formattedRoomIds;
-
         if (Array.isArray(rids)) {
             if (rids.length === 0) {
                 throw new Error("rids array cannot be empty");
             }
-            formattedRoomIds = rids;
-        } else if (typeof rids === 'string') {
-            formattedRoomIds = [rids];
         } else {
-            throw new Error("rids must be a string or an array of strings");
+            throw new Error("rids must be an array of strings");
         }
 
         const url = new URL(this.api.GET_USERS_IN_ROOM, this.connectionUrl);
@@ -218,7 +214,7 @@ class socketlink {
             url: url.toString(),
             method: 'POST',
             headers: { "api-key": this.adminApiKey },
-            data: { rid: formattedRoomIds }
+            data: { rid: rids }
         });
     }
 
@@ -260,17 +256,12 @@ class socketlink {
             throw new Error("uids is required");
         }
 
-        let formattedUserIds;
-
         if (Array.isArray(uids)) {
             if (uids.length === 0) {
                 throw new Error("uids array cannot be empty");
             }
-            formattedUserIds = uids;
-        } else if (typeof uids === 'string') {
-            formattedUserIds = [uids];
         } else {
-            throw new Error("uids must be a string or an array of strings");
+            throw new Error("uids must be an array of strings");
         }
 
         const url = new URL(this.api.GET_SUBSCRIPTIONS, this.connectionUrl);
@@ -279,7 +270,7 @@ class socketlink {
             url: url.toString(),
             method: 'POST',
             headers: { "api-key": this.adminApiKey },
-            data: { uid: formattedUserIds }
+            data: { uid: uids }
         });
     }
 
@@ -331,17 +322,12 @@ class socketlink {
             throw new Error("Room IDs (rids) are required");
         }
 
-        let formattedRids;
-
         if (Array.isArray(rids)) {
             if (rids.length === 0) {
                 throw new Error("Room IDs array cannot be empty");
             }
-            formattedRids = rids;
-        } else if (typeof rids === 'string') {
-            formattedRids = [rids];
         } else {
-            throw new Error("rids must be a string or an array of strings");
+            throw new Error("rids must be an array of strings");
         }
 
         const url = new URL(this.api.BROADCAST_IN_ROOMS, this.connectionUrl);
@@ -350,7 +336,7 @@ class socketlink {
             url: url.toString(),
             method: 'POST',
             headers: { "api-key": this.adminApiKey },
-            data: { message, rid: formattedRids }
+            data: { message, rid: rids }
         });
     }
 
@@ -365,17 +351,12 @@ class socketlink {
             throw new Error("User IDs (userIds) are required");
         }
 
-        let formattedUserIds;
-
         if (Array.isArray(userIds)) {
             if (userIds.length === 0) {
                 throw new Error("User IDs array cannot be empty");
             }
-            formattedUserIds = userIds;
-        } else if (typeof userIds === 'string') {
-            formattedUserIds = [userIds];
         } else {
-            throw new Error("userIds must be a string or an array of strings");
+            throw new Error("userIds must be an array of strings");
         }
 
         const url = new URL(this.api.BROADCAST_TO_USERS, this.connectionUrl);
@@ -384,7 +365,7 @@ class socketlink {
             url: url.toString(),
             method: 'POST',
             headers: { "api-key": this.adminApiKey },
-            data: { message, uid: formattedUserIds }
+            data: { message, uid: userIds }
         });
     }
 
@@ -399,17 +380,12 @@ class socketlink {
             throw new Error("userIds are required");
         }
 
-        let formattedUserIds;
-
         if (Array.isArray(userIds)) {
             if (userIds.length === 0) {
                 throw new Error("userIds array cannot be empty");
             }
-            formattedUserIds = userIds;
-        } else if (typeof userIds === 'string') {
-            formattedUserIds = [userIds];
         } else {
-            throw new Error("userIds must be a string or an array of strings");
+            throw new Error("userIds must be an array of strings");
         }
 
         const url = new URL(this.api.BAN_USERS, this.connectionUrl);
@@ -418,7 +394,12 @@ class socketlink {
             url: url.toString(),
             method: 'POST',
             headers: { "api-key": this.adminApiKey },
-            data: { rid: roomId, uid: formattedUserIds }
+            data: [
+                {
+                    rid: roomId,       // e.g., 'pub-state-cache-test-0'
+                    uid: userIds       // e.g., ['test']
+                }
+            ]
         });
     }
 
@@ -429,15 +410,10 @@ class socketlink {
             throw new Error("userIds are required");
         }
 
-        let formattedUserIds;
-
         if (Array.isArray(userIds)) {
             if (userIds.length === 0) {
                 throw new Error("userIds array cannot be empty");
             }
-            formattedUserIds = userIds;
-        } else if (typeof userIds === 'string') {
-            formattedUserIds = [userIds];
         } else {
             throw new Error("userIds must be a string or an array of strings");
         }
@@ -448,7 +424,12 @@ class socketlink {
             url: url.toString(),
             method: 'POST',
             headers: { "api-key": this.adminApiKey },
-            data: { rid: "global", uid: formattedUserIds }
+            data: [
+                {
+                    rid: "global",       // e.g., 'pub-state-cache-test-0'
+                    uid: userIds       // e.g., ['test']
+                }
+            ]
         });
     }
 
@@ -463,15 +444,10 @@ class socketlink {
             throw new Error("userIds are required");
         }
 
-        let formattedUserIds;
-
         if (Array.isArray(userIds)) {
             if (userIds.length === 0) {
                 throw new Error("userIds array cannot be empty");
             }
-            formattedUserIds = userIds;
-        } else if (typeof userIds === 'string') {
-            formattedUserIds = [userIds];
         } else {
             throw new Error("userIds must be a string or an array of strings");
         }
@@ -482,7 +458,12 @@ class socketlink {
             url: url.toString(),
             method: 'POST',
             headers: { "api-key": this.adminApiKey },
-            data: { rid: roomId, uid: formattedUserIds }
+            data: [
+                {
+                    rid: roomId,       // e.g., 'pub-state-cache-test-0'
+                    uid: userIds       // e.g., ['test']
+                }
+            ]
         });
     }
 
@@ -493,15 +474,10 @@ class socketlink {
             throw new Error("userIds are required");
         }
 
-        let formattedUserIds;
-
         if (Array.isArray(userIds)) {
             if (userIds.length === 0) {
                 throw new Error("userIds array cannot be empty");
             }
-            formattedUserIds = userIds;
-        } else if (typeof userIds === 'string') {
-            formattedUserIds = [userIds];
         } else {
             throw new Error("userIds must be a string or an array of strings");
         }
@@ -512,7 +488,12 @@ class socketlink {
             url: url.toString(),
             method: 'POST',
             headers: { "api-key": this.adminApiKey },
-            data: { rid: "global", uid: formattedUserIds }
+            data: [
+                {
+                    rid: "global",       // e.g., 'pub-state-cache-test-0'
+                    uid: userIds       // e.g., ['test']
+                }
+            ]
         });
     }
 
@@ -539,7 +520,7 @@ class socketlink {
         });
     }
 
-    async enableDisableMessagingInRoomsForGivenUsers(action, rid, uid) {
+    async enableDisableMessagingInRoomsForGivenUsers(action, rid, uids) {
         this.checkAdminApiKey();
 
         const allowedActions = ['enable', 'disable'];
@@ -548,24 +529,30 @@ class socketlink {
             throw new Error(`Invalid action "${action}". Allowed actions are : ${allowedActions.join(', ')}`);
         }
 
-        if (!rid || !uid) {
-            throw new Error("'rid' (string) and 'uid' (string) are required.");
+        if (!rid || !uids) {
+            throw new Error("'rid' (string) and 'uids' (string array) are required.");
         }
 
-        const uidArray = Array.isArray(uid) ? uid : [uid];
+        if (Array.isArray(uids)) {
+            if (uids.length === 0) {
+                throw new Error("uids array cannot be empty");
+            }
+        } else {
+            throw new Error("uids must be an array of strings");
+        }
 
         const url = new URL(this.api.ENABLE_DISABLE_MESSAGING_IN_ROOM.replace(':action', action), this.connectionUrl);
 
         const data = [
             {
                 rid,
-                uid: uidArray
+                uid: uids
             }
         ];
 
         return this.makeRequest({
             url: url.toString(),
-            method: 'PUT',
+            method: 'POST',
             headers: { "api-key": this.adminApiKey },
             data
         });
