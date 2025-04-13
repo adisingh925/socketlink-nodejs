@@ -340,23 +340,23 @@ class socketlink {
         });
     }
 
-    async broadcastMessageToGivenUsers(message, userIds) {
+    async broadcastMessageToGivenUsers(message, uids) {
         this.checkAdminApiKey();
 
         if (!message || typeof message !== 'string') {
             throw new Error("Message must be a non-empty string");
         }
 
-        if (!userIds) {
-            throw new Error("User IDs (userIds) are required");
+        if (!uids) {
+            throw new Error("User IDs (uids) are required");
         }
 
-        if (Array.isArray(userIds)) {
-            if (userIds.length === 0) {
+        if (Array.isArray(uids)) {
+            if (uids.length === 0) {
                 throw new Error("User IDs array cannot be empty");
             }
         } else {
-            throw new Error("userIds must be an array of strings");
+            throw new Error("uids must be an array of strings");
         }
 
         const url = new URL(this.api.BROADCAST_TO_USERS, this.connectionUrl);
@@ -365,27 +365,27 @@ class socketlink {
             url: url.toString(),
             method: 'POST',
             headers: { "api-key": this.adminApiKey },
-            data: { message, uid: userIds }
+            data: { message, uid: uids }
         });
     }
 
-    async banUsersInGivenRooms(roomId, userIds) {
+    async banUsersInGivenRooms(roomId, uids) {
         this.checkAdminApiKey();
 
         if (!roomId || typeof roomId !== 'string') {
             throw new Error("roomId must be a non-empty string");
         }
 
-        if (!userIds) {
-            throw new Error("userIds are required");
+        if (!uids) {
+            throw new Error("uids are required");
         }
 
-        if (Array.isArray(userIds)) {
-            if (userIds.length === 0) {
-                throw new Error("userIds array cannot be empty");
+        if (Array.isArray(uids)) {
+            if (uids.length === 0) {
+                throw new Error("uids array cannot be empty");
             }
         } else {
-            throw new Error("userIds must be an array of strings");
+            throw new Error("uids must be an array of strings");
         }
 
         const url = new URL(this.api.BAN_USERS, this.connectionUrl);
@@ -397,25 +397,25 @@ class socketlink {
             data: [
                 {
                     rid: roomId,       // e.g., 'pub-state-cache-test-0'
-                    uid: userIds       // e.g., ['test']
+                    uid: uids       // e.g., ['test']
                 }
             ]
         });
     }
 
-    async banUsersFromTheServer(userIds) {
+    async banUsersFromTheServer(uids) {
         this.checkAdminApiKey();
 
-        if (!userIds) {
-            throw new Error("userIds are required");
+        if (!uids) {
+            throw new Error("uids are required");
         }
 
-        if (Array.isArray(userIds)) {
-            if (userIds.length === 0) {
-                throw new Error("userIds array cannot be empty");
+        if (Array.isArray(uids)) {
+            if (uids.length === 0) {
+                throw new Error("uids array cannot be empty");
             }
         } else {
-            throw new Error("userIds must be a string or an array of strings");
+            throw new Error("uids must be a string or an array of strings");
         }
 
         const url = new URL(this.api.BAN_USERS, this.connectionUrl);
@@ -427,29 +427,29 @@ class socketlink {
             data: [
                 {
                     rid: "global",       // e.g., 'pub-state-cache-test-0'
-                    uid: userIds       // e.g., ['test']
+                    uid: uids       // e.g., ['test']
                 }
             ]
         });
     }
 
-    async unbanUsersFromGivenRooms(roomId, userIds) {
+    async unbanUsersFromGivenRooms(roomId, uids) {
         this.checkAdminApiKey();
 
         if (!roomId || typeof roomId !== 'string') {
             throw new Error("roomId must be a non-empty string");
         }
 
-        if (!userIds) {
-            throw new Error("userIds are required");
+        if (!uids) {
+            throw new Error("uids are required");
         }
 
-        if (Array.isArray(userIds)) {
-            if (userIds.length === 0) {
-                throw new Error("userIds array cannot be empty");
+        if (Array.isArray(uids)) {
+            if (uids.length === 0) {
+                throw new Error("uids array cannot be empty");
             }
         } else {
-            throw new Error("userIds must be a string or an array of strings");
+            throw new Error("uids must be a string or an array of strings");
         }
 
         const url = new URL(this.api.UNBAN_USERS, this.connectionUrl);
@@ -461,25 +461,25 @@ class socketlink {
             data: [
                 {
                     rid: roomId,       // e.g., 'pub-state-cache-test-0'
-                    uid: userIds       // e.g., ['test']
+                    uid: uids       // e.g., ['test']
                 }
             ]
         });
     }
 
-    async unbanUsersFromTheServer(userIds) {
+    async unbanUsersFromTheServer(uids) {
         this.checkAdminApiKey();
 
-        if (!userIds) {
-            throw new Error("userIds are required");
+        if (!uids) {
+            throw new Error("uids are required");
         }
 
-        if (Array.isArray(userIds)) {
-            if (userIds.length === 0) {
-                throw new Error("userIds array cannot be empty");
+        if (Array.isArray(uids)) {
+            if (uids.length === 0) {
+                throw new Error("uids array cannot be empty");
             }
         } else {
-            throw new Error("userIds must be a string or an array of strings");
+            throw new Error("uids must be a string or an array of strings");
         }
 
         const url = new URL(this.api.UNBAN_USERS, this.connectionUrl);
@@ -491,7 +491,7 @@ class socketlink {
             data: [
                 {
                     rid: "global",       // e.g., 'pub-state-cache-test-0'
-                    uid: userIds       // e.g., ['test']
+                    uid: uids       // e.g., ['test']
                 }
             ]
         });
