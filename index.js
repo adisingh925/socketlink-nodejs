@@ -520,6 +520,44 @@ class socketlink {
         });
     }
 
+    async enableDisableMessagingGloballyForGivenUsers(action, uids) {
+        this.checkAdminApiKey();
+
+        const allowedActions = ['enable', 'disable'];
+
+        if (!allowedActions.includes(action)) {
+            throw new Error(`Invalid action "${action}". Allowed actions are : ${allowedActions.join(', ')}`);
+        }
+
+        if (!uids) {
+            throw new Error("'uids' (string array) are required.");
+        }
+
+        if (Array.isArray(uids)) {
+            if (uids.length === 0) {
+                throw new Error("uids array cannot be empty");
+            }
+        } else {
+            throw new Error("uids must be an array of strings");
+        }
+
+        const url = new URL(this.api.ENABLE_DISABLE_MESSAGING_IN_ROOM.replace(':action', action), this.connectionUrl);
+
+        const data = [
+            {
+                rid: "global",
+                uid: uids
+            }
+        ];
+
+        return this.makeRequest({
+            url: url.toString(),
+            method: 'POST',
+            headers: { "api-key": this.adminApiKey },
+            data
+        });
+    }
+
     async enableDisableMessagingInRoomsForGivenUsers(action, rid, uids) {
         this.checkAdminApiKey();
 
