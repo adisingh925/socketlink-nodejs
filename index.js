@@ -95,7 +95,7 @@ class socketlink {
             }
         });
 
-        this.ws.on('close', () => {
+        this.ws.on('close', (code, reason) => {
             if (this.onClose) this.onClose();
 
             if (this.autoReconnect) {
@@ -104,10 +104,29 @@ class socketlink {
         });
 
         this.ws.on('error', (err) => {
-            console.error(err);
+            switch (true) {
+                case err.message.includes("401"):
+                    console.error("Unauthorized : Invalid client API key");
+                    break;
+
+                case err.message.includes("400"):
+                    console.error("Bad Request : Invalid uid, uid length must be between 1 and 4096 characters");
+
+                case err.message.includes("403"):
+                    console.error("Forbidden : you are banned from the server");
+
+                case err.message.includes("409"):
+                    console.error("Conflict : uid already exists");
+
+                case err.message.includes("503"):
+                    console.error("Service Unavailable : max connection limit reached on the server");
+
+                default:
+                    console.error("An unknown error occurred");
+            }
+
             if (this.onError) this.onError(err);
         });
-
     }
 
     send(message, rid) {
