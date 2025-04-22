@@ -1,6 +1,7 @@
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 const WebSocket = require('ws');
+const https = require('https'); // Add this at the top with other requires
 
 class socketlink {
     constructor({
@@ -98,6 +99,10 @@ class socketlink {
                 }
             } else if (source === "admin") {
                 if (this.onMessage) this.onMessage(parsedMsg.data, parsedMsg.rid);
+            } else if (source === "latency") {
+                this.ws.send(JSON.stringify({
+                    timestamp: Date.now(),
+                }));
             }
         });
 
@@ -136,8 +141,7 @@ class socketlink {
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
             this.ws.send(JSON.stringify({
                 message: message,
-                rid: rid,
-                timestamp: Date.now(),
+                rid: rid
             }));
         } else {
             console.warn("⚠️ Cannot send message, socket not open!");
@@ -163,7 +167,8 @@ class socketlink {
     /** common api call function */
     async makeRequest({ url, method = 'GET', params = {}, headers = {}, data = {} }) {
         try {
-            const response = await axios({ url, method, params, headers, data });
+            const agent = new https.Agent({ rejectUnauthorized: this.rejectUnauthorized === false ? false : true });
+            const response = await axios({ url, method, params, headers, data, httpsAgent: agent });
             return response.data;
         } catch (err) {
             const msg = err.response?.data?.error?.message || err.response?.data?.message || err.message;
@@ -685,6 +690,5 @@ class socketlink {
         })
     }
 }
-
 
 module.exports = socketlink;
