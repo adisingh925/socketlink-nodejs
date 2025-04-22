@@ -89,9 +89,15 @@ class socketlink {
             if (source === "user") {
                 if (this.onMessage) this.onMessage(parsedMsg.data, parsedMsg.rid);
             } else if (source === "server") {
-                if (this.onServerBroadcast) this.onServerBroadcast(parsedMsg.data);
+                if (parsedMsg.data === "SOMEONE_JOINED_THE_ROOM") {
+                    if (this.onUserJoin) this.onUserJoin(parsedMsg.uid, parsedMsg.rid);
+                } else if (parsedMsg.data === "SOMEONE_LEFT_THE_ROOM") {
+                    if (this.onUserLeave) this.onUserLeave(parsedMsg.uid, parsedMsg.rid);
+                } else {
+                    if (this.onWarn) this.onWarn(parsedMsg.data);
+                }
             } else if (source === "admin") {
-                if (this.onAdminBroadcast) this.onAdminBroadcast(parsedMsg.data, parsedMsg.rid);
+                if (this.onMessage) this.onMessage(parsedMsg.data, parsedMsg.rid);
             }
         });
 
@@ -106,26 +112,23 @@ class socketlink {
         this.ws.on('error', (err) => {
             switch (true) {
                 case err.message.includes("401"):
-                    console.error("Unauthorized : Invalid client API key");
-                    break;
+                    throw new Error("Unauthorized : Invalid client API key");
 
                 case err.message.includes("400"):
-                    console.error("Bad Request : Invalid uid, uid length must be between 1 and 4096 characters");
+                    throw new Error("Bad Request : Invalid uid, uid length must be between 1 and 4096 characters");
 
                 case err.message.includes("403"):
-                    console.error("Forbidden : you are banned from the server");
+                    throw new Error("Forbidden : You are banned from the server");
 
                 case err.message.includes("409"):
-                    console.error("Conflict : uid already exists");
+                    throw new Error("Conflict : Uid already exists");
 
                 case err.message.includes("503"):
-                    console.error("Service Unavailable : max connection limit reached on the server");
+                    throw new Error("Service Unavailable : Max connection limit reached on the server");
 
                 default:
-                    console.error("An unknown error occurred");
+                    if (this.onError) this.onError(err);
             }
-
-            if (this.onError) this.onError(err);
         });
     }
 
