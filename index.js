@@ -9,6 +9,7 @@ class socketlink {
         adminApiKey,
         connectionUrl,
         uid,
+        metadata,
         autoReconnect = true,
         reconnectInterval = 3000,
         rejectUnauthorized = true
@@ -17,6 +18,7 @@ class socketlink {
         this.adminApiKey = adminApiKey;
         this.connectionUrl = connectionUrl;
         this.uid = uid || uuidv4();
+        this.metadata = metadata || "";
 
         this.autoReconnect = autoReconnect;
         this.reconnectInterval = reconnectInterval;
@@ -72,7 +74,8 @@ class socketlink {
         this.ws = new WebSocket(this.convertHttpsToWss(this.connectionUrl), {
             headers: {
                 'api-key': this.clientApiKey,
-                'uid': this.uid
+                'uid': this.uid,
+                'metadata': this.metadata,
             },
             rejectUnauthorized: this.rejectUnauthorized,
         });
@@ -91,14 +94,18 @@ class socketlink {
                 if (this.onMessage) this.onMessage(parsedMsg.data, parsedMsg.rid);
             } else if (source === "server") {
                 if (parsedMsg.data === "SOMEONE_JOINED_THE_ROOM") {
-                    if (this.onUserJoin) this.onUserJoin(parsedMsg.uid, parsedMsg.rid);
+                    if (this.onUserJoin) this.onUserJoin(parsedMsg.metadata, parsedMsg.rid);
                 } else if (parsedMsg.data === "SOMEONE_LEFT_THE_ROOM") {
-                    if (this.onUserLeave) this.onUserLeave(parsedMsg.uid, parsedMsg.rid);
+                    if (this.onUserLeave) this.onUserLeave(parsedMsg.metadata, parsedMsg.rid);
                 } else {
                     if (this.onWarn) this.onWarn(parsedMsg.data);
                 }
             } else if (source === "admin") {
-                if (this.onMessage) this.onMessage(parsedMsg.data, parsedMsg.rid);
+                if(parsedMsg.data === "YOU_HAVE_BEEN_BANNED") {
+                    if (this.onBanned) this.onBanned(parsedMsg.rid);
+                } else {
+                    if (this.onMessage) this.onMessage(parsedMsg.data, parsedMsg.rid);
+                }
             } else if (source === "latency") {
                 this.ws.send(JSON.stringify({
                     timestamp: Date.now(),
