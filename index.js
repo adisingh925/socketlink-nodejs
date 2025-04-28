@@ -124,19 +124,22 @@ class socketlink {
         this.ws.on('error', (err) => {
             switch (true) {
                 case err.message.includes("401"):
-                    throw new Error("Unauthorized : Invalid client API key");
-
+                    if (this.onError) this.onError(new Error("Unauthorized : Invalid client API key"));
+                    
                 case err.message.includes("400"):
-                    throw new Error("Bad Request : Invalid uid, uid length must be between 1 and 4096 characters");
-
+                    if (this.onError) this.onError(new Error("Bad Request : Invalid uid, uid length must be between 1 and 4096 characters"));
+                    
+                case err.message.includes("413"):
+                    if (this.onError) this.onError(new Error("Payload Too Large : Invalid metadata, metadata must not be greater than 1024 characters"));
+    
                 case err.message.includes("403"):
-                    throw new Error("Forbidden : You are banned from the server");
+                    if (this.onError) this.onError(new Error("Forbidden : You are banned from the server"));
 
                 case err.message.includes("409"):
-                    throw new Error("Conflict : Uid already exists");
+                    if (this.onError) this.onError(new Error("Conflict : Uid already exists"));
 
                 case err.message.includes("503"):
-                    throw new Error("Service Unavailable : Max connection limit reached on the server");
+                    if (this.onError) this.onError(new Error("Service Unavailable : Max connection limit reached on the server"));
 
                 default:
                     if (this.onError) this.onError(err);
