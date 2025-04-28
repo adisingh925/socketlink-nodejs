@@ -1,4 +1,4 @@
-const socketlink = require("./socketlink-nodejs");
+const socketlink = require("socketlink-nodejs");
 
 const client = new socketlink({
     clientApiKey: 'sl_d94600b5fefdbc8c03ae63053478ef3a8f338cae4fd6ac3e59bc2fa95d2198e3',
