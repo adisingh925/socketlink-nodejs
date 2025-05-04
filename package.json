@@ -10,7 +10,7 @@
   "description": "",
   "dependencies": {
     "axios": "^1.8.4",
-    "socketlink-nodejs": "^1.0.0",
+    "socketlink-nodejs": "^1.11.0",
     "uuid": "^11.1.0",
     "ws": "^8.18.1"
   }

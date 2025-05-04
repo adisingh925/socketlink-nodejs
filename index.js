@@ -12,7 +12,7 @@ class socketlink {
         metadata,
         autoReconnect = true,
         reconnectInterval = 3000,
-        rejectUnauthorized = true
+        rejectUnauthorized = false
     }) {
         this.clientApiKey = clientApiKey;
         this.adminApiKey = adminApiKey;
@@ -125,21 +125,26 @@ class socketlink {
             switch (true) {
                 case err.message.includes("401"):
                     if (this.onError) this.onError(new Error("Unauthorized : Invalid client API key"));
+                    break;
                     
                 case err.message.includes("400"):
                     if (this.onError) this.onError(new Error("Bad Request : Invalid uid, uid length must be between 1 and 4096 characters"));
                     
                 case err.message.includes("413"):
                     if (this.onError) this.onError(new Error("Payload Too Large : Invalid metadata, metadata must not be greater than 1024 characters"));
-    
+                    break;
+
                 case err.message.includes("403"):
                     if (this.onError) this.onError(new Error("Forbidden : You are banned from the server"));
+                    break;
 
                 case err.message.includes("409"):
                     if (this.onError) this.onError(new Error("Conflict : Uid already exists"));
+                    break;
 
                 case err.message.includes("503"):
                     if (this.onError) this.onError(new Error("Service Unavailable : Max connection limit reached on the server"));
+                    break;
 
                 default:
                     if (this.onError) this.onError(err);

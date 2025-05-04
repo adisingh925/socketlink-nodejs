@@ -1,11 +1,11 @@
-const socketlink = require("../index");
+const socketlink = require("socketlink-nodejs");
 
 const client = new socketlink({
     clientApiKey: 'sl_9b65856c9ed6825f684f34615a483b0a5379727125b4515fd4fc450392fd1c19',
     adminApiKey: 'sl_b4c75523d7c37579df17facea3bdaebd311a2a45ad2fabc2c854e45b934acb62',
     connectionUrl: 'https://adisingh925.socketlink.io',
-    uid: "user1",
-    metadata: "This is user1's metadata"
+    uid: "user2",
+    metadata: "This is user2's metadata"
 });
 
 client.onOpen = () => {
@@ -14,7 +14,7 @@ client.onOpen = () => {
     client.subscribeToRoom("pub-chatroom").then(() => {
         console.log("Subscribed to room");
 
-        client.send("Hello from user1", "pub-chatroom");
+        client.send("Hello from user2", "pub-chatroom");
     }).catch((err) => {
         console.log("Error subscribing to room", err);
     });
