@@ -14,7 +14,19 @@ client.onOpen = () => {
     client.subscribeToRoom("pub-chatroom").then(() => {
         console.log("Subscribed to room");
 
-        client.send("Hello from user2", "pub-chatroom");
+        let count = 0;
+        const maxMessages = 10000000;
+
+        const interval = setInterval(() => {
+            if (count >= maxMessages) {
+                clearInterval(interval);
+                console.log(`✅ Sent ${maxMessages} messages`);
+                return;
+            }
+            client.send("Hello from user2", "pub-chatroom");
+            count++;
+        }, 1); 
+
     }).catch((err) => {
         console.log("Error subscribing to room", err);
     });
